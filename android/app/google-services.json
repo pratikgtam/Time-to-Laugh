@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "402789185334",
+    "firebase_url": "https://time-to-laugh.firebaseio.com",
+    "project_id": "time-to-laugh",
+    "storage_bucket": "time-to-laugh.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:402789185334:android:429ab0ebccd567feee6597",
+        "android_client_info": {
+          "package_name": "com.pratik.laugh"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "402789185334-f1pdh4of203gvpk2jfevgoq0rs86dpjh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWwtgXGnSrkuS0Bo61PJ-jO-2OOTUOfqc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "402789185334-f1pdh4of203gvpk2jfevgoq0rs86dpjh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
