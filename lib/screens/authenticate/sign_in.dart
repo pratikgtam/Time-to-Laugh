@@ -31,79 +31,135 @@ class _SignInState extends State<SignIn> {
     return loading
         ? Loading()
         : Scaffold(
-            backgroundColor: Colors.brown[100],
-            appBar: AppBar(
-              backgroundColor: Colors.brown[400],
-              elevation: 0.0,
-              title: Text('Sign in'),
-              actions: <Widget>[
-                FlatButton.icon(
-                  icon: Icon(Icons.person),
-                  label: Text('Register'),
-                  onPressed: () => widget.toggleView(),
+            body: Stack(
+              children: <Widget>[
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 2,
+                  padding: EdgeInsets.only(bottom: 120),
+                  color: Color(0xffFFCD27),
+                  child: Image(
+                    image: AssetImage('assets/lolEmoji.png'),
+                  ),
                 ),
-              ],
-            ),
-            body: Container(
-              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
+                ListView(
                   children: <Widget>[
-                    SizedBox(height: 20.0),
-                    TextFormField(
-                      decoration:
-                          textInputDecoration.copyWith(hintText: 'email'),
-                      validator: (val) => val.isEmpty ? 'Enter an email' : null,
-                      onChanged: (val) {
-                        setState(() => email = val);
-                      },
-                    ),
-                    SizedBox(height: 20.0),
-                    TextFormField(
-                      obscureText: true,
-                      decoration:
-                          textInputDecoration.copyWith(hintText: 'password'),
-                      validator: (val) => val.length < 6
-                          ? 'Enter a password 6+ chars long'
-                          : null,
-                      onChanged: (val) {
-                        setState(() => password = val);
-                      },
-                    ),
-                    SizedBox(height: 20.0),
-                    RaisedButton(
-                        color: Colors.pink[400],
-                        child: Text(
-                          'Sign In',
-                          style: TextStyle(color: Colors.white),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height / 2 - 150),
+                      child: Card(
+                        margin: EdgeInsets.all(30),
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                        color: Colors.white,
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Column(
+                                      children: <Widget>[
+                                        Text(
+                                          'Sign in',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 4,
+                                        ),
+                                        Container(
+                                          color: Colors.yellow[700],
+                                          width: 80,
+                                          height: 5,
+                                        )
+                                      ],
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => widget.toggleView(),
+                                      child: Text(
+                                        'Sign up',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              TextFormField(
+                                decoration: textInputDecoration.copyWith(
+                                    hintText: 'email'),
+                                validator: (val) =>
+                                    val.isEmpty ? 'Enter an email' : null,
+                                onChanged: (val) {
+                                  setState(() => email = val);
+                                },
+                              ),
+                              SizedBox(height: 20.0),
+                              TextFormField(
+                                obscureText: true,
+                                decoration: textInputDecoration.copyWith(
+                                    hintText: 'password'),
+                                validator: (val) => val.length < 6
+                                    ? 'Enter a password 6+ chars long'
+                                    : null,
+                                onChanged: (val) {
+                                  setState(() => password = val);
+                                },
+                              ),
+                              SizedBox(height: 20.0),
+                              RaisedButton(
+                                  padding: EdgeInsets.only(left: 50, right: 50),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30)),
+                                  color: Colors.yellow[400],
+                                  child: Text(
+                                    'Sign In',
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  onPressed: () async {
+                                    if (_formKey.currentState.validate()) {
+                                      setState(() => loading = true);
+                                      dynamic result = await _auth
+                                          .signInWithEmailAndPassword(
+                                              email, password);
+                                      if (result == null) {
+                                        setState(() {
+                                          loading = false;
+                                          error =
+                                              'Could not sign in with those credentials';
+                                        });
+                                      }
+                                    }
+                                  }),
+                              SizedBox(height: 12.0),
+                              Text(
+                                'Forget password?',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              Text(
+                                error,
+                                style: TextStyle(
+                                    color: Colors.red, fontSize: 14.0),
+                              ),
+                              SizedBox(height: 12.0),
+                            ],
+                          ),
                         ),
-                        onPressed: () async {
-                          if (_formKey.currentState.validate()) {
-                            setState(() => loading = true);
-                            dynamic result = await _auth
-                                .signInWithEmailAndPassword(email, password);
-                            if (result == null) {
-                              setState(() {
-                                loading = false;
-                                error =
-                                    'Could not sign in with those credentials';
-                              });
-                            }
-                          }
-                        }),
-
-                    SizedBox(height: 12.0),
-                    Text(
-                      error,
-                      style: TextStyle(color: Colors.red, fontSize: 14.0),
+                      ),
                     ),
                   ],
                 ),
-              ),
+              ],
             ),
           );
   }
-
-
 }
