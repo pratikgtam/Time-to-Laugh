@@ -1,19 +1,19 @@
+import 'package:flutter/material.dart';
+import 'package:laugh/screens/home/home.dart';
 import 'package:laugh/screens/laugh/laugh.dart';
-import 'package:laugh/screens/profile/profile.dart';
 import 'package:laugh/screens/uploads/upload.dart';
 import 'package:laugh/services/auth.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:laugh/models/user.dart';
 
-class Home extends StatefulWidget {
+class Profile extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _ProfileState createState() => _ProfileState();
 }
 
-class _HomeState extends State<Home> {
+class _ProfileState extends State<Profile> {
   final AuthService _auth = AuthService();
-  int _selectedIndex = 0;
+  int _selectedIndex = 3;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -23,6 +23,8 @@ class _HomeState extends State<Home> {
     switch (index) {
       case 0:
         print(index);
+        Navigator.of(context).pushReplacement(
+            new MaterialPageRoute(builder: (BuildContext context) => Home()));
 
         break;
       case 1:
@@ -34,8 +36,6 @@ class _HomeState extends State<Home> {
             new MaterialPageRoute(builder: (BuildContext context) => Laugh()));
         break;
       case 3:
-        Navigator.of(context).pushReplacement(new MaterialPageRoute(
-            builder: (BuildContext context) => Profile()));
         break;
       default:
     }
@@ -49,18 +49,9 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: Colors.brown[50],
       appBar: AppBar(
-        title: Text('Ringtones'),
+        title: Text('Profile'),
         backgroundColor: Colors.brown[400],
         elevation: 0.0,
-        actions: <Widget>[
-          FlatButton.icon(
-            icon: Icon(Icons.person),
-            label: Text('logout'),
-            onPressed: () async {
-              await _auth.signOut();
-            },
-          ),
-        ],
       ),
       body: Container(child: Text('ID:' + user.uid + 'email:' + user.email)),
       bottomNavigationBar: BottomNavigationBar(

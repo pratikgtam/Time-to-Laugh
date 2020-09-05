@@ -1,4 +1,3 @@
-import 'package:laugh/screens/laugh/laugh.dart';
 import 'package:laugh/screens/profile/profile.dart';
 import 'package:laugh/screens/uploads/upload.dart';
 import 'package:laugh/services/auth.dart';
@@ -6,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:laugh/models/user.dart';
 
-class Home extends StatefulWidget {
+class Laugh extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _LaughState createState() => _LaughState();
 }
 
-class _HomeState extends State<Home> {
+class _LaughState extends State<Laugh> {
   final AuthService _auth = AuthService();
-  int _selectedIndex = 0;
+  int _selectedIndex = 2;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -30,8 +29,6 @@ class _HomeState extends State<Home> {
             new MaterialPageRoute(builder: (BuildContext context) => Upload()));
         break;
       case 2:
-        Navigator.of(context).pushReplacement(
-            new MaterialPageRoute(builder: (BuildContext context) => Laugh()));
         break;
       case 3:
         Navigator.of(context).pushReplacement(new MaterialPageRoute(
@@ -49,18 +46,9 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: Colors.brown[50],
       appBar: AppBar(
-        title: Text('Ringtones'),
+        title: Text('Laugh'),
         backgroundColor: Colors.brown[400],
         elevation: 0.0,
-        actions: <Widget>[
-          FlatButton.icon(
-            icon: Icon(Icons.person),
-            label: Text('logout'),
-            onPressed: () async {
-              await _auth.signOut();
-            },
-          ),
-        ],
       ),
       body: Container(child: Text('ID:' + user.uid + 'email:' + user.email)),
       bottomNavigationBar: BottomNavigationBar(
