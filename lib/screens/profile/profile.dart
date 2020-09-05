@@ -53,7 +53,73 @@ class _ProfileState extends State<Profile> {
         backgroundColor: Colors.brown[400],
         elevation: 0.0,
       ),
-      body: Container(child: Text('ID:' + user.uid + 'email:' + user.email)),
+      body: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 16),
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          child: ListView(
+            children: <Widget>[
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Container(
+                    width: 190.0,
+                    height: 190.0,
+                    decoration: new BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: new DecorationImage(
+                        fit: BoxFit.fill,
+                        image: AssetImage("assets/profile.png"),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 8, 0, 32),
+                child: Center(
+                  child: Text(
+                    email,
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.yellow[800],
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              ProfileOptionsWidget(
+                icon: Icons.music_video,
+                title: "Your Laugh",
+                index: 0,
+              ),
+              Divider(),
+              ProfileOptionsWidget(
+                icon: Icons.notifications,
+                title: "Notifications",
+                index: 1,
+              ),
+              Divider(),
+              ProfileOptionsWidget(
+                icon: Icons.settings,
+                title: "Settings",
+                index: 2,
+              ),
+              Divider(),
+              ProfileOptionsWidget(
+                icon: Icons.payment,
+                title: "Cards",
+                index: 3,
+              ),
+              Divider(),
+              ProfileOptionsWidget(
+                icon: Icons.help,
+                title: "Help & Feedback",
+                index: 4,
+              ),
+            ],
+          ),
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
@@ -85,6 +151,59 @@ class _ProfileState extends State<Profile> {
               ),
               title: Text('Profile'))
         ],
+      ),
+    );
+  }
+}
+
+class ProfileOptionsWidget extends StatelessWidget {
+  const ProfileOptionsWidget({Key key, this.icon, this.title, this.index})
+      : super(key: key);
+  final IconData icon;
+  final String title;
+  final int index;
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      splashColor: Colors.yellow,
+      onTap: () {
+        switch (index) {
+          case 0:
+            print(index);
+            break;
+          case 1:
+            print(index);
+            break;
+          case 2:
+            print(index);
+            break;
+          case 3:
+            print(index);
+            break;
+          case 4:
+            print(index);
+            break;
+          default:
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8, bottom: 8),
+        child: Row(
+          children: <Widget>[
+            Icon(
+              icon,
+              size: 30,
+              color: Colors.black54,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 32),
+              child: Text(
+                title,
+                style: TextStyle(fontSize: 20),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
