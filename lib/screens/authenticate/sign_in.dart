@@ -1,3 +1,4 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:laugh/services/auth.dart';
 import 'package:laugh/shared/constants.dart';
 import 'package:laugh/shared/loading.dart';
@@ -141,9 +142,12 @@ class _SignInState extends State<SignIn> {
                                     }
                                   }),
                               SizedBox(height: 12.0),
-                              Text(
-                                'Forget password?',
-                                style: TextStyle(color: Colors.grey),
+                              InkWell(
+                                onTap: () => showEmailEnteringFiels(),
+                                child: Text(
+                                  'Forget password?',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
                               ),
                               Text(
                                 error,
@@ -161,5 +165,67 @@ class _SignInState extends State<SignIn> {
               ],
             ),
           );
+  }
+
+  showEmailEnteringFiels() {
+    TextEditingController emailController = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)), //this right here
+            child: Container(
+              height: 200,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Enter your email below to reset password.'),
+                    TextField(
+                      decoration: InputDecoration(hintText: 'Email'),
+                      controller: emailController,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        width: 320.0,
+                        child: RaisedButton(
+                          onPressed: () {
+                            print('clicked');
+                            String email = emailController.text;
+                            print("Email: " + email);
+                            if (email != "") {
+                              resetPassword(emailController.text);
+                              Navigator.pop(context);
+                            }
+                          },
+                          child: Text(
+                            "Submit",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          color: const Color(0xFF1BC0C5),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  Future<void> resetPassword(String email) async {
+    print('Forget Password Clicked');
+    final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+    await _firebaseAuth.sendPasswordResetEmail(email: email);
+    Flushbar(
+      title: "Please check your email",
+      message: "Instruction is sent to reset your password.",
+      duration: Duration(seconds: 3),
+    )..show(context);
   }
 }
