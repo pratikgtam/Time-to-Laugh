@@ -4,8 +4,7 @@ import 'package:laugh/shared/constants.dart';
 import 'package:laugh/shared/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+
 import 'package:laugh/services/auth.dart';
 
 class SignIn extends StatefulWidget {

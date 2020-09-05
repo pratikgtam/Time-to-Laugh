@@ -3,8 +3,7 @@ import 'package:laugh/models/user.dart';
 import 'database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -53,61 +52,61 @@ class AuthService {
     }
   }
 
-  Future signInWithGoogle() async {
-    final GoogleSignIn googleSignIn = GoogleSignIn();
-    final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
-    final GoogleSignInAuthentication googleSignInAuthentication =
-        await googleSignInAccount.authentication;
-
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleSignInAuthentication.accessToken,
-      idToken: googleSignInAuthentication.idToken,
-    );
-
-    try {
-      final AuthResult authResult =
-          await _auth.signInWithCredential(credential);
-      final FirebaseUser user = authResult.user;
-      return user;
-    } catch (e) {
-      print('e');
-      return null;
-    }
-  }
-
-  Future signInWithFb(BuildContext context) async {
-    final FacebookLogin facebookLogin = FacebookLogin();
-    final FacebookLoginResult facebookLoginResult =
-        await facebookLogin.logIn(['email', 'public_profile']);
-
-    switch (facebookLoginResult.status) {
-      case FacebookLoginStatus.loggedIn:
-        FacebookAccessToken myToken = facebookLoginResult.accessToken;
-
-        AuthCredential credentialfb =
-            FacebookAuthProvider.getCredential(accessToken: myToken.token);
-
-        try {
-          final AuthResult authResult =
-              await _auth.signInWithCredential(credentialfb);
-          FirebaseUser user = authResult.user;
-          return user;
-        } catch (e) {
-          if (e.code == 'ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL') {
-            return e.code;
-          } else {
-            return null;
-          }
-        }
-        break;
-      case FacebookLoginStatus.cancelledByUser:
-        return null;
-        break;
-      case FacebookLoginStatus.error:
-        return null;
-        break;
-    }
-  }
+//  Future signInWithGoogle() async {
+//    final GoogleSignIn googleSignIn = GoogleSignIn();
+//    final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
+//    final GoogleSignInAuthentication googleSignInAuthentication =
+//        await googleSignInAccount.authentication;
+//
+//    final AuthCredential credential = GoogleAuthProvider.getCredential(
+//      accessToken: googleSignInAuthentication.accessToken,
+//      idToken: googleSignInAuthentication.idToken,
+//    );
+//
+//    try {
+//      final AuthResult authResult =
+//          await _auth.signInWithCredential(credential);
+//      final FirebaseUser user = authResult.user;
+//      return user;
+//    } catch (e) {
+//      print('e');
+//      return null;
+//    }
+//  }
+//
+//  Future signInWithFb(BuildContext context) async {
+//    final FacebookLogin facebookLogin = FacebookLogin();
+//    final FacebookLoginResult facebookLoginResult =
+//        await facebookLogin.logIn(['email', 'public_profile']);
+//
+//    switch (facebookLoginResult.status) {
+//      case FacebookLoginStatus.loggedIn:
+//        FacebookAccessToken myToken = facebookLoginResult.accessToken;
+//
+//        AuthCredential credentialfb =
+//            FacebookAuthProvider.getCredential(accessToken: myToken.token);
+//
+//        try {
+//          final AuthResult authResult =
+//              await _auth.signInWithCredential(credentialfb);
+//          FirebaseUser user = authResult.user;
+//          return user;
+//        } catch (e) {
+//          if (e.code == 'ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL') {
+//            return e.code;
+//          } else {
+//            return null;
+//          }
+//        }
+//        break;
+//      case FacebookLoginStatus.cancelledByUser:
+//        return null;
+//        break;
+//      case FacebookLoginStatus.error:
+//        return null;
+//        break;
+//    }
+//  }
 
   // register with email and password
   Future registerWithEmailAndPassword(String email, String password) async {

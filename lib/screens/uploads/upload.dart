@@ -1,3 +1,4 @@
+import 'package:audio_recorder/audio_recorder.dart';
 import 'package:laugh/screens/home/home.dart';
 import 'package:laugh/screens/laugh/laugh.dart';
 import 'package:laugh/screens/profile/profile.dart';
@@ -12,6 +13,12 @@ class Upload extends StatefulWidget {
 }
 
 class _UploadState extends State<Upload> {
+  // Check permissions before starting
+  Future<bool> hasPermissions = AudioRecorder.hasPermissions;
+
+// Get the state of the recorder
+  Future<bool> isRecording = AudioRecorder.isRecording;
+
   final AuthService _auth = AuthService();
   int _selectedIndex = 1;
 
@@ -68,7 +75,62 @@ class _UploadState extends State<Upload> {
         backgroundColor: Colors.brown[400],
         elevation: 0.0,
       ),
-      body: Container(child: Text('ID:' + user.uid + 'email:' + user.email)),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Expanded(
+            flex: 3,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(32, 50, 32, 100),
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.cloud_upload,
+                    color: Colors.black,
+                    size: 100,
+                  ),
+                  Text(
+                    '     Upload Your Laugh',
+                    style: TextStyle(
+                      fontSize: 17,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 4,
+            child: Column(
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {},
+                  child: Icon(
+                    Icons.keyboard_voice,
+                    size: 200,
+                    color: Colors.yellow[800],
+                  ),
+                ),
+                Text(
+                  '00:00',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {},
+                  child: Text(
+                    'Stop recording',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
