@@ -96,7 +96,7 @@ class AppBodyState extends State<AppBody> {
     try {
       if (await AudioRecorder.hasPermissions) {
         if (_controller.text != null && _controller.text != "") {
-          String path = _controller.text;
+          String path = "/storage/emulated/0/"+DateTime.now().millisecondsSinceEpoch.toString();
           if (!_controller.text.contains('/')) {
             io.Directory appDocDirectory =
                 await getApplicationDocumentsDirectory();
@@ -127,7 +127,7 @@ class AppBodyState extends State<AppBody> {
     var recording = await AudioRecorder.stop();
     print("Stop recording: ${recording.path}");
     bool isRecording = await AudioRecorder.isRecording;
-     file = widget.localFileSystem.file(recording.path);
+    file = widget.localFileSystem.file(recording.path);
     print("  File length: ${await file.length()}");
     setState(() {
       _recording = recording;
@@ -154,7 +154,6 @@ class AppBodyState extends State<AppBody> {
     audioPlayer.onPlayerCompletion.listen((event) {
       setState(() {
         playButtonVisible = true;
-
       });
     });
   }
@@ -175,23 +174,21 @@ class AppBodyState extends State<AppBody> {
       final String url = await ref.getDownloadURL();
       print("The download URL is " + url);
     } else if (storageUploadTask.isInProgress) {
-
       storageUploadTask.events.listen((event) {
-        double percentage = 100 *(event.snapshot.bytesTransferred.toDouble()
-            / event.snapshot.totalByteCount.toDouble());
+        double percentage = 100 *
+            (event.snapshot.bytesTransferred.toDouble() /
+                event.snapshot.totalByteCount.toDouble());
         print("THe percentage " + percentage.toString());
       });
 
-      StorageTaskSnapshot storageTaskSnapshot =await storageUploadTask.onComplete;
+      StorageTaskSnapshot storageTaskSnapshot =
+          await storageUploadTask.onComplete;
       String downloadUrl1 = await storageTaskSnapshot.ref.getDownloadURL();
 
       //Here you can get the download URL when the task has been completed.
       print("Download URL " + downloadUrl1.toString());
-
-    } else{
+    } else {
       //Catch any cases here that might come up like canceled, interrupted
     }
   }
-
-
 }
