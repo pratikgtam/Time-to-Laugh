@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:laugh/screens/laugh/laugh.dart';
 import 'package:laugh/screens/profile/profile.dart';
 import 'package:laugh/screens/uploads/upload.dart';
@@ -14,6 +15,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final AuthService _auth = AuthService();
   int _selectedIndex = 0;
+
+  QuerySnapshot _dataSnapshot;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -42,10 +45,30 @@ class _HomeState extends State<Home> {
   }
 
   @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  Future<void> getData() async {
+    final db = Firestore.instance;
+
+    await db
+        .collection("AllRingtones")
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      // print(snapshot.documents[0].data['name']);
+      _dataSnapshot = snapshot;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     User user = Provider.of<User>(context);
     final String id = user.uid;
     final String email = user.email;
+    final db = Firestore.instance;
+
     return Scaffold(
       backgroundColor: Colors.brown[50],
       appBar: AppBar(
@@ -62,7 +85,26 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-      body: Container(child: Text('ID:' + user.uid + 'email:' + user.email)),
+      body: StreamBuilder<QuerySnapshot>(
+          stream: Firestore.instance.collection('AllRingtones').snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return new Text('Loading...');
+              default:
+                return new ListView(
+                  children:
+                      snapshot.data.documents.map((DocumentSnapshot document) {
+                    return new ListTile(
+                      title: new Text(document['name']),
+                      subtitle: new Text(document['uid']),
+                    );
+                  }).toList(),
+                );
+            }
+          }),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],

@@ -1,10 +1,13 @@
 import 'package:audio_recorder/audio_recorder.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:laugh/screens/home/home.dart';
 import 'package:laugh/screens/laugh/laugh.dart';
 import 'package:laugh/screens/profile/profile.dart';
 import 'package:laugh/services/auth.dart';
 import 'package:flutter/material.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:laugh/models/user.dart';
 
@@ -191,9 +194,9 @@ class _UploadState extends State<Upload> {
                       Visibility(
                         visible: !_isRecoding && playButtonVisible,
                         child: new FlatButton(
-                          onPressed: _saveFile,
+                          onPressed: showRecordEnteringField,
 //                  _play,
-                          child: new Text("Upload"),
+                          child: new Text("Uploadd"),
                           color: Colors.red[200],
                         ),
                       ),
@@ -308,9 +311,9 @@ class _UploadState extends State<Upload> {
     });
   }
 
-  _saveFile() async {
+  _saveFile(String fileName) async {
+    _showProgress();
     StorageReference storageReference = FirebaseStorage.instance.ref();
-    File _image;
 
     //CreateRefernce to path.
     StorageReference ref = storageReference.child("yourstorageLocation/");
@@ -318,9 +321,8 @@ class _UploadState extends State<Upload> {
     //StorageUpload task is used to put the data you want in storage
     //Make sure to get the image first before calling this method otherwise _image will be null.
 
-    StorageUploadTask storageUploadTask = ref
-        .child(id+_recording.path)
-        .putFile(file);
+    StorageUploadTask storageUploadTask =
+        ref.child(id + _recording.path).putFile(file);
 
     if (storageUploadTask.isSuccessful || storageUploadTask.isComplete) {
       final String url = await ref.getDownloadURL();
@@ -339,8 +341,102 @@ class _UploadState extends State<Upload> {
 
       //Here you can get the download URL when the task has been completed.
       print("Download URL " + downloadUrl1.toString());
+      createLaugh(downloadUrl1.toString(), fileName);
     } else {
+      Flushbar(
+        title: "Something Went wrong!",
+        message: "Couldn't Upoad File",
+        duration: Duration(seconds: 3),
+      )..show(context);
       //Catch any cases here that might come up like canceled, interrupted
     }
   }
+
+  showRecordEnteringField() {
+    TextEditingController emailController =
+        TextEditingController(text: "Untitled Record");
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)), //this right here
+            child: Container(
+              height: 200,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Your Laugh Name'),
+                    TextField(
+                      decoration: InputDecoration(hintText: 'Record 1'),
+                      controller: emailController,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        width: 320.0,
+                        child: RaisedButton(
+                          onPressed: () {
+                            print('clicked');
+                            String email = emailController.text;
+                            print("Record name: " + email);
+                            if (email != "") {
+                              _saveFile(emailController.text);
+                            }
+                          },
+                          child: Text(
+                            "Upload",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          color: const Color(0xFF1BC0C5),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  Future<void> createLaugh(String laughUrl, String fileName) async {
+    final db = Firestore.instance;
+
+    await db.collection("AllRingtones").add({
+      'name': fileName,
+      'url': laughUrl,
+      'uid': id,
+    }).then((documentReference) {
+      print(documentReference.documentID);
+    }).catchError((e) {
+      print(e);
+    });
+
+    await db.collection("users").document(id).collection('BoughtRingtone').add({
+      'name': fileName,
+      'url': laughUrl,
+    }).then((documentReference) {
+      _hideProgress();
+      print(documentReference.documentID);
+    }).catchError((e) {
+      _hideProgress();
+      print(e);
+    });
+  }
+
+  _showProgress() async {
+    final ProgressDialog pr = ProgressDialog(context);
+    await pr.show();
+  }
+
+  _hideProgress() async {
+    final ProgressDialog pr = ProgressDialog(context);
+    await pr.hide();
+  }
+
+  _goToMyLaugh() {}
 }
