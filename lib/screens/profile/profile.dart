@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:laugh/screens/home/home.dart';
 import 'package:laugh/screens/laugh/laugh.dart';
@@ -5,6 +6,7 @@ import 'package:laugh/screens/uploads/upload.dart';
 import 'package:laugh/services/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:laugh/models/user.dart';
+import 'package:laugh/screens/laugh/your_laugh.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -52,6 +54,15 @@ class _ProfileState extends State<Profile> {
         title: Text('Profile'),
         backgroundColor: Colors.brown[400],
         elevation: 0.0,
+        actions: <Widget>[
+          FlatButton.icon(
+            icon: Icon(Icons.person),
+            label: Text('logout'),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16),
@@ -169,7 +180,8 @@ class ProfileOptionsWidget extends StatelessWidget {
       onTap: () {
         switch (index) {
           case 0:
-            print(index);
+            Navigator.of(context).pushReplacement(new MaterialPageRoute(
+                builder: (BuildContext context) => YourLaugh()));
             break;
           case 1:
             print(index);

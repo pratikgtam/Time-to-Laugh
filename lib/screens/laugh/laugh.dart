@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:laugh/screens/home/home.dart';
 import 'package:laugh/screens/profile/profile.dart';
 import 'package:laugh/screens/uploads/upload.dart';
 import 'package:laugh/services/auth.dart';
@@ -11,6 +13,8 @@ class Laugh extends StatefulWidget {
 }
 
 class _LaughState extends State<Laugh> {
+  List url = [];
+  List name = [];
   final AuthService _auth = AuthService();
   int _selectedIndex = 2;
 
@@ -21,7 +25,8 @@ class _LaughState extends State<Laugh> {
 
     switch (index) {
       case 0:
-        print(index);
+        Navigator.of(context).pushReplacement(
+            new MaterialPageRoute(builder: (BuildContext context) => Home()));
 
         break;
       case 1:
@@ -50,7 +55,43 @@ class _LaughState extends State<Laugh> {
         backgroundColor: Colors.brown[400],
         elevation: 0.0,
       ),
-      body: Container(child: Text('ID:' + user.uid + 'email:' + user.email)),
+      body: StreamBuilder<QuerySnapshot>(
+          stream: Firestore.instance.collection('AllRingtones').snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+              // return new Text('Loading...');
+              default:
+                if (url.length < 1) {
+                  for (int i = 0; i < snapshot.data.documents.length; i++) {
+                    url.add(snapshot.data.documents[i]['url']);
+                    name.add(snapshot.data.documents[i]['name']);
+                  }
+                }
+                return new ListView.separated(
+                    separatorBuilder: (context, index) => Divider(
+                          color: Colors.black,
+                        ),
+                    itemCount: snapshot.data.documents.length,
+                    itemBuilder: (context, index) {
+                      return new ListTile(
+                        onTap: () => _buyLaugh(index),
+                        trailing: RaisedButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18)),
+                            onPressed: () {},
+                            color: Colors.yellow[800],
+                            child: Text(
+                              'Buy',
+                              style: TextStyle(color: Colors.white),
+                            )),
+                        title: new Text(name[index]),
+                      );
+                    });
+            }
+          }),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
@@ -85,4 +126,6 @@ class _LaughState extends State<Laugh> {
       ),
     );
   }
+
+  _buyLaugh(int index) {}
 }

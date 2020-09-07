@@ -5,16 +5,15 @@ import 'package:laugh/screens/profile/profile.dart';
 import 'package:laugh/screens/uploads/upload.dart';
 import 'package:laugh/services/auth.dart';
 import 'package:flutter/material.dart';
-import 'package:laugh/shared/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:laugh/models/user.dart';
 
-class Home extends StatefulWidget {
+class YourLaugh extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _YourLaughState createState() => _YourLaughState();
 }
 
-class _HomeState extends State<Home> {
+class _YourLaughState extends State<YourLaugh> {
   final AuthService _auth = AuthService();
 
   AudioPlayer audioPlayer = AudioPlayer();
@@ -36,7 +35,6 @@ class _HomeState extends State<Home> {
   bool videoPaused = false;
 
   Duration duration;
-  var stream;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -82,24 +80,18 @@ class _HomeState extends State<Home> {
       iconDataRadio.add(Icons.radio_button_unchecked);
     }
 
-    stream = Firestore.instance
-        .collection('users')
-        .document(id)
-        .collection('BoughtRingtone')
-        .snapshots();
     return Scaffold(
       backgroundColor: Colors.brown[50],
       appBar: AppBar(
-        title: Text('Ringtones'),
+        title: Text('Your Laugh'),
         backgroundColor: Colors.brown[400],
         elevation: 0.0,
 //        actions: <Widget>[
 //          FlatButton.icon(
 //            icon: Icon(Icons.person),
 //            label: Text('logout'),
-//            onPressed: ()  {
-//
-//               _auth.signOut();
+//            onPressed: () async {
+//              await _auth.signOut();
 //            },
 //          ),
 //        ],
@@ -164,31 +156,30 @@ class _HomeState extends State<Home> {
             ),
           ),
           Expanded(
-            child: StreamBuilder(
-                stream: stream,
-                builder: ( context,
-                     snapshot) {
+            child: StreamBuilder<QuerySnapshot>(
+                stream: Firestore.instance
+                    .collection('users')
+                    .document(id)
+                    .collection('UsersRingtone')
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError)
                     return new Text('Error: ${snapshot.error}');
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
-//                      return Loading();
-
+                    // return new Text('Loading...');
                     default:
-                      if (url.length < 1 &&
-                          snapshot.connectionState != ConnectionState.waiting)
+                      if (url.length < 1) {
                         for (int i = 0;
                             i < snapshot.data.documents.length;
                             i++) {
                           url.add(snapshot.data.documents[i]['url']);
                           name.add(snapshot.data.documents[i]['name']);
                         }
-
+                      }
                       return new ListView.builder(
-                          itemCount: snapshot.connectionState ==
-                                  ConnectionState.waiting
-                              ? 0
-                              : snapshot.data.documents.length,
+                          itemCount: snapshot.data.documents.length,
                           itemBuilder: (context, index) {
                             return new ListTile(
                               onTap: () => _playLaugh(index),
@@ -300,7 +291,6 @@ class _HomeState extends State<Home> {
       print('Max duration: $duration');
       setState(() {
         this.duration = duration;
-        stream = null;
       });
     });
   }

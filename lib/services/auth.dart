@@ -1,9 +1,10 @@
+import 'package:laugh/main.dart';
 import 'package:laugh/models/user.dart';
+import 'package:laugh/screens/wrapper.dart';
 
 import 'database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -126,6 +127,7 @@ class AuthService {
 
   // sign out
   Future signOut() async {
+
     try {
       return await _auth.signOut();
     } catch (error) {
