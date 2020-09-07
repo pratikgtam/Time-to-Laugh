@@ -96,7 +96,8 @@ class AppBodyState extends State<AppBody> {
     try {
       if (await AudioRecorder.hasPermissions) {
         if (_controller.text != null && _controller.text != "") {
-          String path = "/storage/emulated/0/"+DateTime.now().millisecondsSinceEpoch.toString();
+          String path = "/storage/emulated/0/" +
+              DateTime.now().millisecondsSinceEpoch.toString();
           if (!_controller.text.contains('/')) {
             io.Directory appDocDirectory =
                 await getApplicationDocumentsDirectory();
@@ -192,3 +193,39 @@ class AppBodyState extends State<AppBody> {
     }
   }
 }
+
+// Card(
+//   child: Column(
+//     children: <Widget>[
+//       Text(playingLaughName),
+//       Slider(
+//         value: _sliderPosition,
+//         min: 0.0,
+//         max: _sliderMaximum,
+//         onChanged: (value) {
+//           setState(() {
+//             _sliderPosition = value;
+//           });
+//         },
+//       ),
+//       Row(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         mainAxisSize: MainAxisSize.max,
+//         children: <Widget>[
+//           Icon(
+//             Icons.arrow_left,
+//             size: 50,
+//           ),
+//           Icon(
+//             _iconPlayPause,
+//             size: 50,
+//           ),
+//           Icon(
+//             Icons.arrow_right,
+//             size: 50,
+//           )
+//         ],
+//       )
+//     ],
+//   ),
+// ),

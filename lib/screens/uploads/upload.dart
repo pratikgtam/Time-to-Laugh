@@ -416,7 +416,7 @@ class _UploadState extends State<Upload> {
       print(e);
     });
 
-    await db.collection("users").document(id).collection('BoughtRingtone').add({
+    await db.collection("users").document(id).collection('UsersRingtone').add({
       'name': fileName,
       'url': laughUrl,
     }).then((documentReference) {
