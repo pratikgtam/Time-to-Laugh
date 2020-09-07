@@ -34,6 +34,8 @@ class _HomeState extends State<Home> {
 
   bool videoPaused = false;
 
+  Duration duration;
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -63,6 +65,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     _setAudioStates();
+
     super.initState();
   }
 
@@ -118,7 +121,7 @@ class _HomeState extends State<Home> {
                       mainAxisSize: MainAxisSize.max,
                       children: <Widget>[
                         InkWell(
-                          onTap: () => _playLaugh(_currentLaughIndex + 1),
+                          onTap: () => _playLaugh(_currentLaughIndex - 1),
                           child: Icon(
                             Icons.arrow_left,
                             size: 50,
@@ -132,13 +135,18 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         InkWell(
-                          onTap: () => _playLaugh(_currentLaughIndex - 1),
+                          onTap: () => _playLaugh(_currentLaughIndex + 1),
                           child: Icon(
                             Icons.arrow_right,
                             size: 50,
                           ),
                         )
                       ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                          "${duration.inMinutes.remainder(60)}:${duration.inSeconds.remainder(60)}"),
                     )
                   ],
                 ),
@@ -158,19 +166,24 @@ class _HomeState extends State<Home> {
                     return new Text('Error: ${snapshot.error}');
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
-                      return new Text('Loading...');
+                    // return new Text('Loading...');
                     default:
+                      if (url.length < 1) {
+                        for (int i = 0;
+                            i < snapshot.data.documents.length;
+                            i++) {
+                          url.add(snapshot.data.documents[i]['url']);
+                          name.add(snapshot.data.documents[i]['name']);
+                        }
+                      }
                       return new ListView.builder(
                           itemCount: snapshot.data.documents.length,
                           itemBuilder: (context, index) {
-                            url.add(snapshot.data.documents[index]['url']);
-                            name.add(snapshot.data.documents[index]['name']);
-
                             return new ListTile(
-                                onTap: () => _playLaugh(index),
-                                leading: Icon(iconDataRadio[index]),
-                                title: new Text(name[index]),
-                                subtitle: new Text(url[index]));
+                              onTap: () => _playLaugh(index),
+                              leading: Icon(iconDataRadio[index]),
+                              title: new Text(name[index]),
+                            );
                           });
                   }
                 }),
@@ -213,7 +226,12 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _playLaugh(index) async {
-    if (index < url.length) {
+    if (index < url.length && index >= 0) {
+      _currentLaughIndex = index;
+      print("CUrrent laaugh" +
+          _currentLaughIndex.toString() +
+          " URL Length" +
+          url.length.toString());
       for (int i = 0; i < iconDataRadio.length; i++) {
         iconDataRadio[i] = Icons.radio_button_unchecked;
       }
@@ -265,6 +283,13 @@ class _HomeState extends State<Home> {
 
     audioPlayer.onPlayerCompletion.listen((event) {
       print('COmpleted');
+    });
+
+    audioPlayer.onDurationChanged.listen((Duration duration) {
+      print('Max duration: $duration');
+      setState(() {
+        this.duration = duration;
+      });
     });
   }
 }
